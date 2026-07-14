@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
 import { motion, useScroll } from "framer-motion";
 import { toast } from "sonner";
 import {
   ArrowLeft, Clock, Calendar, User, Layers, Download, Printer, Copy, ArrowRight, Lightbulb, BookOpen,
 } from "lucide-react";
 import { Reveal } from "@/components/common/Reveal";
+import { INSIGHTS, getInsightById } from "@/data/insights";
 
-const API = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
 const slug = (s) => s.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
 
 const Meta = ({ icon: Icon, label, value }) => (
@@ -24,26 +23,21 @@ const Meta = ({ icon: Icon, label, value }) => (
 
 export default function Publication() {
   const { id } = useParams();
-  const [p, setP] = useState(null);
-  const [all, setAll] = useState([]);
+  const p = getInsightById(id);
+  const all = INSIGHTS;
   const { scrollYProgress } = useScroll();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    axios.get(`${API}/insights/${id}`).then((r) => setP(r.data)).catch(() => setP(false));
-    axios.get(`${API}/insights`).then((r) => setAll(r.data)).catch(() => {});
   }, [id]);
 
-  if (p === false) {
+  if (!p) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
         <p className="font-display text-2xl font-bold text-slate-900">Publication not found</p>
         <Link href="/knowledge" className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white">Back to Knowledge Centre</Link>
       </div>
     );
-  }
-  if (!p) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-400">Loading publication…</div>;
   }
 
   const related = all.filter((x) => (p.related || []).includes(x.title)).slice(0, 4);

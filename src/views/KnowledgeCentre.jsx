@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
-import { Search, Clock, ArrowRight, FileText, Star, X } from "lucide-react";
+import { Search, Clock, ArrowRight, Star, X } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Reveal, Stagger, StaggerItem } from "@/components/common/Reveal";
 import { KC_MISSION, KC_FILTERS, FAQS } from "@/data/site";
-
-const API = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
+import { INSIGHTS } from "@/data/insights";
 
 const fmtDate = (d) => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
@@ -47,15 +45,11 @@ const PubCard = ({ p, large = false, idPrefix = "pub-card" }) => (
 );
 
 export default function KnowledgeCentre() {
-  const [items, setItems] = useState([]);
+  const items = INSIGHTS;
   const [q, setQ] = useState("");
   const [type, setType] = useState("All");
   const [topic, setTopic] = useState("All");
   const [openFaq, setOpenFaq] = useState(0);
-
-  useEffect(() => {
-    axios.get(`${API}/insights`).then((r) => setItems(r.data)).catch(() => {});
-  }, []);
 
   const featured = useMemo(() => items.filter((i) => i.featured), [items]);
 
@@ -145,13 +139,7 @@ export default function KnowledgeCentre() {
             ))}
           </Stagger>
 
-          {items.length === 0 && (
-            <div className="flex flex-col items-center py-24 text-slate-400">
-              <FileText className="h-8 w-8" />
-              <p className="mt-3">Loading the library…</p>
-            </div>
-          )}
-          {items.length > 0 && filtered.length === 0 && (
+          {filtered.length === 0 && (
             <p className="py-16 text-center text-slate-400">No publications match your filters.</p>
           )}
         </div>

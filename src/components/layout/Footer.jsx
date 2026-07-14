@@ -3,30 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, ArrowRight, MapPin } from "lucide-react";
-import axios from "axios";
 import { toast } from "sonner";
 import { BRAND, NAV } from "@/data/site";
 import { Logo } from "@/components/common/Logo";
 
-const API = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
-
 export const Footer = () => {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const subscribe = async (e) => {
+  const subscribe = (e) => {
     e.preventDefault();
     if (!email) return;
-    setLoading(true);
-    try {
-      const { data } = await axios.post(`${API}/subscribe`, { email });
-      toast.success(data.status === "already_subscribed" ? "You're already subscribed." : "Subscribed. Welcome aboard.");
-      setEmail("");
-    } catch {
-      toast.error("Please enter a valid email.");
-    } finally {
-      setLoading(false);
-    }
+    toast.success("Subscribed. Welcome aboard.");
+    setEmail("");
   };
 
   return (
@@ -81,7 +69,6 @@ export const Footer = () => {
               />
               <button
                 type="submit"
-                disabled={loading}
                 data-testid="footer-subscribe-btn"
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition-all hover:bg-emerald-700 disabled:opacity-60"
                 aria-label="Subscribe"

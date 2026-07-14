@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Clock, ArrowRight, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Reveal, Stagger, StaggerItem } from "@/components/common/Reveal";
-
-const API = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
+import { INSIGHTS } from "@/data/insights";
 
 const TAG_COLORS = {
   "White Paper": "bg-emerald-50 text-emerald-700",
@@ -19,12 +17,8 @@ const TAG_COLORS = {
 };
 
 export default function Insights() {
-  const [items, setItems] = useState([]);
+  const items = INSIGHTS;
   const [active, setActive] = useState(null);
-
-  useEffect(() => {
-    axios.get(`${API}/insights`).then((r) => setItems(r.data)).catch(() => {});
-  }, []);
 
   return (
     <div data-testid="insights-page">
@@ -64,12 +58,6 @@ export default function Insights() {
               </StaggerItem>
             ))}
           </Stagger>
-
-          {items.length === 0 && (
-            <Reveal>
-              <p className="py-20 text-center text-slate-400">Insights are loading…</p>
-            </Reveal>
-          )}
         </div>
       </section>
 

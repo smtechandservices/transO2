@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
 import * as Icons from "lucide-react";
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
@@ -11,8 +9,8 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { Reveal, Stagger, StaggerItem } from "@/components/common/Reveal";
 import { IMPACT_STATS, CARBON_CREDIT, NATIONAL_MATH } from "@/data/site";
+import { IMPACT_DATA } from "@/data/impact";
 
-const API = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
 const COLORS = ["#10b981", "#06b6d4", "#0ea5e9", "#34d399"];
 
 const Icon = ({ name, className }) => {
@@ -30,11 +28,7 @@ const SUSTAINABILITY = [
 ];
 
 export default function Impact() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    axios.get(`${API}/impact`).then((r) => setData(r.data)).catch(() => {});
-  }, []);
+  const data = IMPACT_DATA;
 
   return (
     <div data-testid="impact-page">

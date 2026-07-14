@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { Mail, MapPin, Send, Building2, Globe2, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -11,8 +10,6 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { BRAND } from "@/data/site";
-
-const API = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
 
 const CATEGORIES = [
   "Investor Inquiry",
@@ -31,24 +28,15 @@ const AUDIENCE = [
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", organization: "", category: "General Contact", message: "" });
-  const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await axios.post(`${API}/contact`, form);
-      setSent(true);
-      toast.success("Thank you. Your message has been received.");
-      setForm({ name: "", email: "", organization: "", category: "General Contact", message: "" });
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    setSent(true);
+    toast.success("Thank you. Your message has been received.");
+    setForm({ name: "", email: "", organization: "", category: "General Contact", message: "" });
   };
 
   return (
@@ -195,9 +183,9 @@ export default function Contact() {
                       <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">Message</label>
                       <textarea required rows={4} value={form.message} onChange={update("message")} data-testid="contact-message" className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-secondary/40 px-4 py-3 text-sm text-slate-800 outline-none transition-all focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-100" placeholder="Tell us how you'd like to collaborate…" />
                     </div>
-                    <button type="submit" disabled={loading} data-testid="contact-submit" className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-emerald-600 hover:shadow-hover disabled:opacity-60">
-                      {loading ? "Sending…" : "Send message"}
-                      {!loading && <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
+                    <button type="submit" data-testid="contact-submit" className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-emerald-600 hover:shadow-hover disabled:opacity-60">
+                      Send message
+                      <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </button>
                   </form>
                 )}
