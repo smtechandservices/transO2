@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, Clock, ArrowRight, Star, X } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { Reveal, Stagger, StaggerItem } from "@/components/common/Reveal";
+import { Reveal } from "@/components/common/Reveal";
 import { KC_MISSION, KC_FILTERS, FAQS } from "@/data/site";
 import { INSIGHTS } from "@/data/insights";
 
@@ -133,11 +133,11 @@ export default function KnowledgeCentre() {
 
           <div className="mt-4 text-sm text-slate-400">{filtered.length} publication{filtered.length !== 1 ? "s" : ""}</div>
 
-          <Stagger className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
+          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
-              <StaggerItem key={p.id}><PubCard p={p} /></StaggerItem>
+              <PubCard key={p.id} p={p} />
             ))}
-          </Stagger>
+          </div>
 
           {filtered.length === 0 && (
             <p className="py-16 text-center text-slate-400">No publications match your filters.</p>
@@ -157,7 +157,7 @@ export default function KnowledgeCentre() {
 
       {/* FAQ */}
       <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-6">
+        <div className="mx-auto max-w-7xl px-6">
           <SectionHeading eyebrow="FAQ" title="Frequently asked questions" />
           <div className="mt-12 space-y-3" data-testid="kc-faq">
             {FAQS.map((f, i) => {
