@@ -29,14 +29,42 @@ const AUDIENCE = [
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", organization: "", category: "General Contact", message: "" });
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    toast.success("Thank you. Your message has been received.");
-    setForm({ name: "", email: "", organization: "", category: "General Contact", message: "" });
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY,
+          name: form.name,
+          email: form.email,
+          organization: form.organization,
+          category: form.category,
+          message: form.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSent(true);
+        toast.success("Thank you. Your message has been received.");
+        setForm({ name: "", email: "", organization: "", category: "General Contact", message: "" });
+      } else {
+        toast.error(data.message || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -183,8 +211,8 @@ export default function Contact() {
                       <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">Message</label>
                       <textarea required rows={4} value={form.message} onChange={update("message")} data-testid="contact-message" className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-secondary/40 px-4 py-3 text-sm text-slate-800 outline-none transition-all focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-100" placeholder="Tell us how you'd like to collaborate…" />
                     </div>
-                    <button type="submit" data-testid="contact-submit" className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-emerald-600 hover:shadow-hover disabled:opacity-60">
-                      Send message
+                    <button type="submit" disabled={submitting} data-testid="contact-submit" className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-emerald-600 hover:shadow-hover disabled:opacity-60">
+                      {submitting ? "Sending…" : "Send message"}
                       <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </button>
                   </form>
